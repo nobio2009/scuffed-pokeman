@@ -1,5 +1,6 @@
 import pygame
 from colors import *
+from save import *
 
 pygame.init()
 
@@ -20,6 +21,7 @@ PlayerState_2 = pygame.image.load(f"PlayerState[2].png")
 PlayerState_3 = pygame.image.load(f"PlayerState[3].png")
 PlayerState_4 = pygame.image.load(f"PlayerState[4].png")
 PlayerState = 1
+PlayerLocation = CurrentLocation
 CurrentPlayerState = PlayerState_1
 
 #Collisions
@@ -45,13 +47,33 @@ def Movement(pygame, x,y):
 def borders(x, y):
     if x >= 650:
         x = 650
-    elif x <= -16:
-        x = -16
-    if y <= 10:
-        y=10
+    elif x <= 51.5:
+        x = 51.5
+    if y <= 120:
+        y=120
     elif y >= 440:
         y=440
     return x,y
+
+#Initial background
+locations = ['PlayerRoom', 'PlayerKitchen', 'Village', 'Bjarnes lab', 'Healing center']
+if PlayerLocation == locations[0]:
+    background = pygame.image.load('PlayerRoom.png')
+elif PlayerLocation == locations[1]:
+    background = pygame.image.load('PlayerKitchen.png')
+else:
+    pass
+
+#saving
+def save(location):
+        f = open("save.py", "w")
+        f.write(f"CurrentLocation = \"{location}\"" + "\n")
+        f.close()
+
+#Text Rendering
+def DrawText(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x, y))
 
 #Buttons
 class Button:
@@ -88,9 +110,18 @@ class Button:
 run = True
 while run:
     #vital functions
-    screen.fill('white')
+    screen.fill(TEAL)
+    screen.blit(background, (0, 10))
     timer.tick(fps)
 
+    #backgrounds
+    locations = ['PlayerRoom', 'PlayerKitchen', 'Village', 'Bjarnes lab', 'Healing center']
+    if PlayerLocation == locations[0]:
+        background = pygame.image.load('PlayerRoom.png')
+    elif PlayerLocation == locations[1]:
+        background = pygame.image.load('PlayerKitchen.png')
+    else:
+        pass
 
     #Events
     for event in pygame.event.get():
@@ -108,9 +139,18 @@ while run:
             if event.key == pygame.K_d:
                 PlayerState = 4
 
+            if event.key == pygame.K_e:
+                print(f'PlayerX: {PlrX} | PlayerY: {PlrY}')
+                if PlrX >= 565.0 and PlrX <= 617.5 and PlrY == 120:
+                    if PlayerLocation == 'PlayerRoom':
+                        PlayerLocation = 'PlayerKitchen'
+
+                    if PlayerLocation == 'PlayerKitchen':
+                        PlayerLocation = 'PlayerRoom'
+
         if event.type == pygame.KEYUP:
             pass
-    
+
     PlrX,PlrY,CurrentPlayerState = Movement(pygame, PlrX,PlrY)
     
     if PlayerState == 1:
