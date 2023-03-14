@@ -23,7 +23,38 @@ PlayerState_4 = pygame.image.load(f"PlayerState[4].png")
 PlayerState = 1
 CurrentPlayerState = PlayerState_1
 
+#Collisions
+def is_collided_with(self, sprite): return self.colliderect(sprite)
 
+#Movement
+speed = 2.5
+
+def Movement(pygame, x,y):
+    keys = pygame.key.get_pressed()
+    file='player.png'
+    if keys[pygame.K_w]:
+        y-=speed
+    elif keys[pygame.K_s]:
+        y+=speed
+    elif keys[pygame.K_d]:
+        x+=speed
+    elif keys[pygame.K_a]:
+        x-=speed
+    x,y = borders(x, y)
+    return x,y,file
+
+def borders(x, y):
+    if x >= 650:
+        x = 650
+    elif x <= -16:
+        x = -16
+    if y <= 10:
+        y=10
+    elif y >= 440:
+        y=440
+    return x,y
+
+#Buttons
 class Button:
     def __init__(self, text, x_pos, y_pos, enabled):
         self.text = text
@@ -69,17 +100,19 @@ while run:
             break
 
         if event.type == pygame.KEYDOWN:
-            if event == pygame.K_w:
+            if event.key == pygame.K_w:
                 PlayerState = 1
-            if event == pygame.K_s:
+            if event.key == pygame.K_s:
                 PlayerState = 2
-            if event == pygame.K_a:
+            if event.key == pygame.K_a:
                 PlayerState = 3
-            if event == pygame.K_d:
+            if event.key == pygame.K_d:
                 PlayerState = 4
 
         if event.type == pygame.KEYUP:
             pass
+    
+    PlrX,PlrY,CurrentPlayerState = Movement(pygame, PlrX,PlrY)
     
     if PlayerState == 1:
         CurrentPlayerState = PlayerState_1
