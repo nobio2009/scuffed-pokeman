@@ -12,6 +12,9 @@ fps = 60
 timer = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 18)
 
+#menu variables
+game_paused = False
+
 #player
 # PlayerState[1] = ↑, PlayerState[2] = ↓, PlayerState[3] = <-, PlayerState[4] = ->
 PlrY = 8
@@ -45,14 +48,24 @@ def Movement(pygame, x,y):
     return x,y,file
 
 def borders(x, y):
-    if x >= 650:
-        x = 650
-    elif x <= 51.5:
-        x = 51.5
-    if y <= 120:
-        y=120
-    elif y >= 440:
-        y=440
+    if PlayerLocation == locations[0]:
+        if x >= 650:
+            x = 650
+        elif x <= 51.5:
+            x = 51.5
+        if y <= 120:
+            y=120
+        elif y >= 440:
+            y=440
+    elif PlayerLocation == locations[1]:
+        if x >= 634.0:
+            x = 634.0
+        elif x <= 99.0:
+            x = 99.0
+        if y <= 172.5:
+            y=172.5
+        elif y >= 525.0:
+            y=525.0
     return x,y
 
 #Initial background
@@ -111,17 +124,15 @@ run = True
 while run:
     #vital functions
     screen.fill(TEAL)
-    screen.blit(background, (0, 10))
     timer.tick(fps)
 
-    #backgrounds
-    locations = ['PlayerRoom', 'PlayerKitchen', 'Village', 'Bjarnes lab', 'Healing center']
-    if PlayerLocation == locations[0]:
-        background = pygame.image.load('PlayerRoom.png')
-    elif PlayerLocation == locations[1]:
-        background = pygame.image.load('PlayerKitchen.png')
+    if game_paused == True:
+        #Show menu
+        pass
     else:
         pass
+
+    pygame.draw.rect(screen, (255,0,0), pygame.Rect(30, 30, 60, 60))
 
     #Events
     for event in pygame.event.get():
@@ -140,17 +151,33 @@ while run:
                 PlayerState = 4
 
             if event.key == pygame.K_e:
-                print(f'PlayerX: {PlrX} | PlayerY: {PlrY}')
-                if PlrX >= 565.0 and PlrX <= 617.5 and PlrY == 120:
-                    if PlayerLocation == 'PlayerRoom':
+                print(f'PlayerX: {PlrX} | PlayerY: {PlrY}, PlayerLocation: {PlayerLocation}')
+                #PlayerRoom exit
+                if PlayerLocation == 'PlayerRoom' and PlrX >= 565.0 and PlrX <= 617.5 and PlrY == 120:
+                    if PlayerLocation == locations[0]:
+                        background = pygame.image.load('PlayerKitchen.png')
                         PlayerLocation = 'PlayerKitchen'
-
-                    if PlayerLocation == 'PlayerKitchen':
+                    else:
+                        pass
+                
+                if PlayerLocation == 'PlayerKitchen' and PlrX >= 500 and PlrX <= 577.5 and PlrY == 172.5:
+                    if PlayerLocation == locations[1]:
+                        background = pygame.image.load('PlayerRoom.png')
                         PlayerLocation = 'PlayerRoom'
+                    else:
+                        pass
+
+            if event.key == pygame.K_ESCAPE:
+                if game_paused:
+                    game_paused = False
+                    fps = 0
+                else:
+                    game_paused = True
+                    fps = 60
 
         if event.type == pygame.KEYUP:
             pass
-
+    screen.blit(background, (0, 10))
     PlrX,PlrY,CurrentPlayerState = Movement(pygame, PlrX,PlrY)
     
     if PlayerState == 1:
@@ -162,6 +189,7 @@ while run:
     if PlayerState == 4:
         CurrentPlayerState = PlayerState_4
     screen.blit(CurrentPlayerState, (PlrX,PlrY))        
+    
     
     pygame.display.flip()
     pygame.display.update()
