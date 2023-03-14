@@ -13,8 +13,16 @@ timer = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 18)
 
 #player
-# PlayerState[1] = ↓, PlayerState[2] = ↑, PlayerState[3] = <-, PlayerState[4] = ->
-player_sprite = pygame.image.load()
+# PlayerState[1] = ↑, PlayerState[2] = ↓, PlayerState[3] = <-, PlayerState[4] = ->
+PlrY = 8
+PlrX = 350
+PlayerState_1 = pygame.image.load(f"PlayerState[1].png")
+PlayerState_2 = pygame.image.load(f"PlayerState[2].png")
+PlayerState_3 = pygame.image.load(f"PlayerState[3].png")
+PlayerState_4 = pygame.image.load(f"PlayerState[4].png")
+PlayerState = 1
+CurrentPlayerState = PlayerState_1
+
 
 class Button:
     def __init__(self, text, x_pos, y_pos, enabled):
@@ -59,6 +67,29 @@ while run:
         if event.type == pygame.QUIT:
             run = False
             break
+
+        if event.type == pygame.KEYDOWN:
+            if event == pygame.K_w:
+                PlayerState = 1
+            if event == pygame.K_s:
+                PlayerState = 2
+            if event == pygame.K_a:
+                PlayerState = 3
+            if event == pygame.K_d:
+                PlayerState = 4
+
+        if event.type == pygame.KEYUP:
+            pass
+    
+    if PlayerState == 1:
+        CurrentPlayerState = PlayerState_1
+    if PlayerState == 2:
+        CurrentPlayerState = PlayerState_2
+    if PlayerState == 3:
+        CurrentPlayerState = PlayerState_3
+    if PlayerState == 4:
+        CurrentPlayerState = PlayerState_4
+    screen.blit(CurrentPlayerState, (PlrX,PlrY))        
     
     pygame.display.flip()
     pygame.display.update()
