@@ -1,6 +1,5 @@
 import pygame
 from colors import *
-from movement import Movement
 
 pygame.init()
 
