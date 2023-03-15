@@ -1,4 +1,4 @@
-import pygame
+import pygame, time
 from colors import *
 from save import *
 
@@ -26,6 +26,12 @@ PlayerState_4 = pygame.image.load(f"PlayerState[4].png")
 PlayerState = 1
 PlayerLocation = CurrentLocation
 CurrentPlayerState = PlayerState_1
+running = False
+
+def PlrTP(x, y):
+    PlrY = y
+    PlrX = x
+    return PlrX, PlrY
 
 #Collisions
 def is_collided_with(self, sprite): return self.colliderect(sprite)
@@ -55,8 +61,8 @@ def borders(x, y):
             x = 51.5
         if y <= 120:
             y=120
-        elif y >= 440:
-            y=440
+        elif y >= 542.5:
+            y=542.5
     elif PlayerLocation == locations[1]:
         if x >= 634.0:
             x = 634.0
@@ -132,7 +138,8 @@ while run:
     else:
         pass
 
-    pygame.draw.rect(screen, (255,0,0), pygame.Rect(30, 30, 60, 60))
+    #Buttons
+
 
     #Events
     for event in pygame.event.get():
@@ -150,6 +157,11 @@ while run:
             if event.key == pygame.K_d:
                 PlayerState = 4
 
+            if event.key == pygame.K_LSHIFT:
+                if not running:
+                    running = True
+                    speed = 4
+
             if event.key == pygame.K_e:
                 print(f'PlayerX: {PlrX} | PlayerY: {PlrY}, PlayerLocation: {PlayerLocation}')
                 #PlayerRoom exit
@@ -157,16 +169,31 @@ while run:
                     if PlayerLocation == locations[0]:
                         background = pygame.image.load('PlayerKitchen.png')
                         PlayerLocation = 'PlayerKitchen'
+                        PlrX = 530
+                        PlrY = 172
+                        PlayerState = 2
                     else:
                         pass
-                
+                #PlayerKitchen stairway exit
                 if PlayerLocation == 'PlayerKitchen' and PlrX >= 500 and PlrX <= 577.5 and PlrY == 172.5:
                     if PlayerLocation == locations[1]:
                         background = pygame.image.load('PlayerRoom.png')
                         PlayerLocation = 'PlayerRoom'
+                        PlrX = 597
+                        PlrY = 120
+                        PlayerState = 2
                     else:
                         pass
 
+            if event.key == pygame.K_KP_DIVIDE:
+                command = input("CMD: ").lower()
+                if command == 'tp' or command == 'teleport':
+                    x_axis = input('X coords: ')
+                    y_axis = input('Y coords: ')
+                    PlrX = float(x_axis)
+                    PlrY = float(y_axis)
+
+            #Pause
             if event.key == pygame.K_ESCAPE:
                 if game_paused:
                     game_paused = False
@@ -176,7 +203,12 @@ while run:
                     fps = 60
 
         if event.type == pygame.KEYUP:
-            pass
+            #Running
+            if event.key == pygame.K_LSHIFT:
+                if running:
+                    running = False
+                    speed = 2.5
+
     screen.blit(background, (0, 10))
     PlrX,PlrY,CurrentPlayerState = Movement(pygame, PlrX,PlrY)
     
